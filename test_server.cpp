@@ -14,13 +14,15 @@
 #include <binder/ProcessState.h>
 #include <binder/IServiceManager.h>
 #include <cutils/properties.h>
-#include <uitls/Log.h>
+#include <utils/Log.h>
+
+#include "IHelloService.h"
+
 
 using namespace android;
 
-void main(void)
+int main(void)
 {
-
 	/* addService */
 	/* while(1) { read data, parse data , call server function } */
 
@@ -35,6 +37,8 @@ void main(void)
 	/* while */
 	ProcessState::self()->startThreadPool();
 	IPCThreadState::self()->joinThreadPool();
+
+	return 0;
 }
 
 

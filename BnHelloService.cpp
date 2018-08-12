@@ -4,13 +4,13 @@
  * reference : frameworks\av\media\libmedia\IMediaPlayerService.cpp
 */
 
-#include "IHelloService.h"
-
 #define LOG_TAG "binder_cpp_BnHelloService"
+
+#include "IHelloService.h"
 
 namespace android {
 
-status_t BnHelloService::onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags = 0)
+status_t BnHelloService::onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags)
 {
 
 	/* parse data, call sayhello/sayhello_to */

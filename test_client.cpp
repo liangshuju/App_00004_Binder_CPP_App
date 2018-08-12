@@ -8,7 +8,10 @@
 #include <binder/ProcessState.h>
 #include <binder/IServiceManager.h>
 #include <cutils/properties.h>
-#include <cutils/Log.h>
+#include <utils/Log.h>
+
+#include "IHelloService.h"
+
 
 using namespace android;
 

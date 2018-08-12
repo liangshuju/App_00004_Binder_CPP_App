@@ -8,15 +8,15 @@
 #define ANDROID_IHELLOSERVICE_H
 
 #include <utils/Errors.h> // for status_t
-#include <ttils/KeyedVector.h>
-#include <utils/ReBase.h>
+#include <utils/KeyedVector.h>
+#include <utils/RefBase.h>
 #include <utils/String8.h>
 
 #include <binder/IInterface.h>
 #include <binder/Parcel.h>
 
-#define HELLO_SVR_CMD_SAYHELLO    0
-#define HELLO_SVR_CMD_SAYHELLO_TO 1
+#define HELLO_SVC_CMD_SAY_HELLO    0
+#define HELLO_SVC_CMD_SAY_HELLO_TO 1
 
 namespace android {
 
@@ -36,7 +36,7 @@ public:
 	virtual status_t onTransact(uint32_t code, const Parcel& data, Parcel* reply, uint32_t flags = 0);
 
 	virtual void sayhello(void);
-	virtual void sayhello_to(const char *name);
+	virtual int sayhello_to(const char *name);
 };
 
 }

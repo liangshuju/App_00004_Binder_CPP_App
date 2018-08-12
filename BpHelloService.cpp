@@ -1,11 +1,12 @@
-
 /*
  * reference : frameworks\av\media\libmedia\IMediaPlayerService.cpp
  **/
 
- #include "IHelloService.h"
+#include "IHelloService.h"
 
-class BpHelloService: public BpInterface<IHelloService>
+namespace android {
+
+class BpHelloService : public BpInterface<IHelloService>
 {
 public:
 	BpHelloService(const sp<IBinder>& impl) : BpInterface<IHelloService>(impl)
@@ -37,10 +38,9 @@ public:
 	
 };
 
-IMPLEMENT_META_INTERFACE(HelloService, "android.media.IHelloService");
+IMPLEMENT_META_INTERFACE(HelloService, "android.test.IHelloService");
 
-
-
+}
 
 
 
