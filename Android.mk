@@ -5,6 +5,8 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES:= \
 	BnHelloService.cpp \
 	BpHelloService.cpp \
+	BnGoodbyeService.cpp \
+	BpGoodbyeService.cpp \
 	test_server.cpp
 
 LOCAL_SHARED_LIBRARIES := \
@@ -22,6 +24,7 @@ include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
 	BpHelloService.cpp \
+	BpGoodbyeService.cpp \
 	test_client.cpp
 
 LOCAL_SHARED_LIBRARIES := \
