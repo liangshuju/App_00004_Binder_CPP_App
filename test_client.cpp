@@ -84,8 +84,8 @@ using namespace android;
 		}		
 		else if (argc == 3)
 		{
-			serviceGoodbye->saygoodbye_to(argv[2]);
-			ALOGI("client call say goodbye to service.");
+			cnt = serviceGoodbye->saygoodbye_to(argv[2]);
+			ALOGI("client call say goodbye to service : cnt = %d.", cnt);
 		}
 	} 
 	else

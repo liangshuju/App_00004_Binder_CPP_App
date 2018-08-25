@@ -15,8 +15,15 @@
 #include <binder/IInterface.h>
 #include <binder/Parcel.h>
 
-#define HELLO_SVC_CMD_SAY_HELLO    0
-#define HELLO_SVC_CMD_SAY_HELLO_TO 1
+//#define HELLO_SVC_CMD_SAY_HELLO    0
+//#define HELLO_SVC_CMD_SAY_HELLO_TO 1
+
+//compalibility
+#define HELLO_SVC_CMD_SAY_HELLO    1
+#define HELLO_SVC_CMD_SAY_HELLO_TO 2
+
+
+#define HELLO_SERVER_DESCRIPTOR "IHelloService"
 
 namespace android {
 

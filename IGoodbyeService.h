@@ -15,8 +15,15 @@
 #include <binder/IInterface.h>
 #include <binder/Parcel.h>
 
+#if 0
 #define GOODBYE_SVC_CMD_SAY_GOODBYE    0
 #define GOODBYE_SVC_CMD_SAY_GOODBYE_TO 1
+#else // compatible java binder os
+#define GOODBYE_SVC_CMD_SAY_GOODBYE    1
+#define GOODBYE_SVC_CMD_SAY_GOODBYE_TO 2
+#endif
+
+#define GOODBYE_SERVOCE_DESCRIPTOR "IGoodbyeService"
 
 namespace android {
 
