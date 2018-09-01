@@ -15,14 +15,39 @@
 #include <binder/IServiceManager.h>
 #include <cutils/properties.h>
 #include <utils/Log.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include "IHelloService.h"
 #include "IGoodbyeService.h"
 
 using namespace android;
 
-int main(void)
+/* usage : test_server <file> */
+int main(int argc, const char **argv)
 {
+	int fd = 0;
+
+	if (argc == 2)
+	{
+		fd = open(argv[1], O_RDWR);
+		if (fd == -1)
+		{
+			ALOGE("main thread open file failed : %s!!\n", strerror(fd));
+			return -1;
+		}
+		else
+		{
+			ALOGI("test_server main thread open file : fd = %d\n", fd);
+		}
+	}
+	else
+	{
+		ALOGE("Usage : you must input <%s> <file>!!\n", argv[1]);
+		return -1;
+	}
+	
 	/* addService */
 	/* while(1) { read data, parse data , call server function } */
 
@@ -32,7 +57,7 @@ int main(void)
 	/* get BpServiceManager */
 	sp<IServiceManager> sm = defaultServiceManager();
 
-	sm->addService(String16("hello"), new BnHelloService());
+	sm->addService(String16("hello"), new BnHelloService(fd));
 	sm->addService(String16("goodbye"), new BnGoodbyeService());
 
 	/* while */

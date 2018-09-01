@@ -9,6 +9,9 @@
 #include <binder/IServiceManager.h>
 #include <cutils/properties.h>
 #include <utils/Log.h>
+#include <unistd.h>
+#include <sys/types.h>
+
 
 #include "IHelloService.h"
 #include "IGoodbyeService.h"
@@ -21,7 +24,8 @@ using namespace android;
  *
  * ./test_client hello/goodbye <name>
  *
- *****/
+ * ./test_client hello <readfile>
+ ****/
  int main(int argc, char **argv)
  {
  	int cnt;
@@ -30,6 +34,7 @@ using namespace android;
 		ALOGI("Usage : \n");
 		ALOGI("%s <hello | goodbye> \n", argv[0]);
 		ALOGI("%s <hello | goodbye> <name> \n", argv[0]);
+		ALOGI("%s <readfile> \n", argv[0]);
 		return -1;
 	}
 
@@ -42,8 +47,7 @@ using namespace android;
 
 
 	if (!strcmp(argv[1], "hello")) 
-	{
-
+	{			
 		sp<IBinder> binderHello = sm->getService(String16("hello"));
 		if (binderHello == 0) 
 		{
@@ -53,19 +57,19 @@ using namespace android;
 
 		/* service must is BpHelloService pointer */
 		sp<IHelloService> serviceHello = interface_cast<IHelloService>(binderHello);
-
-
+		
 		/* call service function */
 		if (argc < 3) 
 		{
 			serviceHello->sayhello();
-			ALOGI(" client call sayhello.\n");
+			ALOGI("client call sayhello.\n");
 		}
 		else
 		{
 			cnt = serviceHello->sayhello_to(argv[2]);
 			ALOGI("client call sayhello_to , cnt = %d. \n", cnt);
 		}
+		
 	}
 	else if (!strcmp(argv[1], "goodbye")) 
 	{
@@ -87,7 +91,35 @@ using namespace android;
 			cnt = serviceGoodbye->saygoodbye_to(argv[2]);
 			ALOGI("client call say goodbye to service : cnt = %d.", cnt);
 		}
-	} 
+	}
+	else if (!strcmp(argv[1], "readfile"))
+	{
+		/* call service function */		
+		sp<IBinder> binderHello = sm->getService(String16("hello"));
+		if (binderHello == 0) 
+		{
+			ALOGI("can not get hello service !\n");
+			return -1;
+		}
+
+		/* service must is BpHelloService pointer */
+		sp<IHelloService> serviceHello = interface_cast<IHelloService>(binderHello);
+
+		ALOGI("client get fd .\n");
+
+		int fd = serviceHello->get_fd();
+		ALOGI("client get fd = %d.\n", fd);
+
+		//while(1) sleep(10);
+
+		lseek(fd, 0, SEEK_SET);
+
+		char buf[512] = {0};
+		int len = read(fd, buf, 512);
+		buf[len] = '\0';
+		ALOGI("client read file : buf = %s.\n", buf);
+
+	}
 	else
 	{
 		ALOGI("client get service failed!");
