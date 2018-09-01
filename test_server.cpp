@@ -17,36 +17,77 @@
 #include <utils/Log.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <sys/types.h>  
+#include <sys/socket.h>
+#include <string.h>
+#include <errno.h>
 
 
 #include "IHelloService.h"
 #include "IGoodbyeService.h"
 
+#define SOCKET_BUFFER_SIZE (32768U)
+
 using namespace android;
 
-/* usage : test_server <file> */
-int main(int argc, const char **argv)
-{
-	int fd = 0;
+/* reference:
+ *
+ * http://blog.csdn.net/linan_nwu/article/details/8222349 
+ *
+ */
 
-	if (argc == 2)
+class MyThread: public Thread {
+private:
+	int fd;
+
+public:
+	MyThread();
+	MyThread(int fd)
 	{
-		fd = open(argv[1], O_RDWR);
-		if (fd == -1)
-		{
-			ALOGE("main thread open file failed : %s!!\n", strerror(fd));
-			return -1;
-		}
-		else
-		{
-			ALOGI("test_server main thread open file : fd = %d\n", fd);
-		}
+		this->fd = fd;
 	}
-	else
+
+	// return true, loop call this funciton; return false, this function only call one time 
+	bool threadLoop()
 	{
-		ALOGE("Usage : you must input <%s> <file>!!\n", argv[1]);
-		return -1;
+		char buf[512] = {0};
+		int cnt = 0;
+		int len = 0;
+
+		while(1)
+		{
+			/* read data from test_client send it data */	
+			len = read(fd, buf, 512);
+			buf[len] = '\0';
+			ALOGI("test_server : read data = %s.\n", buf);
+
+			/* server send data to client */
+			len = sprintf(buf, "Hello, test_client, cnt = %d", cnt ++);
+			write(fd, buf, len);
+		}
+
+		return true;
 	}
+
+};
+
+
+int main(void)
+{
+	int sockets[2];
+	int buffer_size = SOCKET_BUFFER_SIZE;
+	
+	socketpair(AF_UNIX, SOCK_SEQPACKET, 0, sockets); // af_unix sock_seqpacket
+	setsockopt(sockets[0], SOL_SOCKET, SO_SNDBUF, &buffer_size, sizeof(buffer_size));
+	setsockopt(sockets[0], SOL_SOCKET, SO_RCVBUF, &buffer_size, sizeof(buffer_size));
+	setsockopt(sockets[1], SOL_SOCKET, SO_SNDBUF, &buffer_size, sizeof(buffer_size));
+	setsockopt(sockets[1], SOL_SOCKET, SO_RCVBUF, &buffer_size, sizeof(buffer_size));
+
+	/* create thrad, use it and test_client by socketpair communication */
+	//MyThread th = new MyThread(sockets[0]); // error
+	sp<MyThread> th = new MyThread(sockets[0]); // ok
+	th->run();
 	
 	/* addService */
 	/* while(1) { read data, parse data , call server function } */
@@ -57,7 +98,7 @@ int main(int argc, const char **argv)
 	/* get BpServiceManager */
 	sp<IServiceManager> sm = defaultServiceManager();
 
-	sm->addService(String16("hello"), new BnHelloService(fd));
+	sm->addService(String16("hello"), new BnHelloService(sockets[1]));
 	sm->addService(String16("goodbye"), new BnGoodbyeService());
 
 	/* while */

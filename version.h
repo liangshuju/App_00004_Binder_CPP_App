@@ -1,1 +1,1 @@
-#define BINDER_CPP_VERSION "v1.0.5"
+#define BINDER_CPP_VERSION "v1.0.6"

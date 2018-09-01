@@ -26,6 +26,29 @@ using namespace android;
  *
  * ./test_client hello <readfile>
  ****/
+
+ void do_process(int fd)
+ {
+	 int len = 0;
+	 int cnt = 0;
+	 char buf[512] = {0};
+ 
+	 while(1)
+	 {
+		 /* send data to test_server */
+		 len = sprintf(buf, "Hello, test_server process, cnt = %d", cnt ++);
+		 write(fd, buf, len);
+ 
+		 /* read data form test_server */
+		 len = read(fd, buf, 512);
+		 buf[len] = '\0';
+		 ALOGI("test_client read data = %s.\n", buf);
+ 
+		 sleep(6);// 避免打印信息太多
+	 }
+ }
+
+
  int main(int argc, char **argv)
  {
  	int cnt;
@@ -110,14 +133,7 @@ using namespace android;
 		int fd = serviceHello->get_fd();
 		ALOGI("client get fd = %d.\n", fd);
 
-		//while(1) sleep(10);
-
-		lseek(fd, 0, SEEK_SET);
-
-		char buf[512] = {0};
-		int len = read(fd, buf, 512);
-		buf[len] = '\0';
-		ALOGI("client read file : buf = %s.\n", buf);
+		do_process(fd);
 
 	}
 	else
